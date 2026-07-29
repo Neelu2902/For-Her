@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Girlfriend's Day, My Love ❤️</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Dancing+Script:wght@600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==========================================
+       CSS VARIABLES & GLOBAL STYLES
+       ========================================== */
+    :root {
+      --primary: #ff6b8b;
+      --primary-hover: #ff4770;
+      --secondary: #dcd0ff;
+      --accent-gold: #f7d070;
+      --rose-pink: #ffd1dc;
+      --deep-rose: #d81b60;
+      --glass-bg: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.3);
+      --glass-shadow: 0 12px 40px 0 rgba(255, 105, 135, 0.18);
+      --text-main: #3a1c28;
+      --text-muted: #6e4858;
+      --white: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #ffe4e1 0%, #e6e6fa 40%, #ffd1dc 70%, #ffc3a0 100%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Background Canvas for Interactive Particles */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Typography */
+    h1, h2, h3, .serif {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .handwriting {
+      font-family: 'Dancing Script', cursive;
+    }
+
+    /* Glassmorphism Card Style */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: var(--glass-shadow);
+      padding: 40px;
+      margin-bottom: 40px;
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+    }
+
+    .glass-card:hover {
+      box-shadow: 0 20px 50px 0 rgba(255, 105, 135, 0.28);
+    }
+
+    /* Button Styling */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #ff6b8b, #d81b60);
+      color: var(--white);
+      border: none;
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(216, 27, 96, 0.3);
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 30px rgba(216, 27, 96, 0.45);
+      background: linear-gradient(135deg, #ff4770, #c2185b);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.4);
+      color: var(--text-main);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ==========================================
+       1. LOADING SCREEN
+       ========================================== */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffd1dc, #e6e6fa);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1s ease, visibility 1s ease;
+    }
+
+    .heart-loader {
+      font-size: 4rem;
+      animation: pulse 1.2s infinite ease-in-out;
+    }
+
+    .loader-text {
+      margin-top: 20px;
+      font-size: 1.4rem;
+      color: var(--deep-rose);
+      letter-spacing: 2px;
+      text-align: center;
+      padding: 0 20px;
+    }
+
+    .loader-bar {
+      width: 200px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 4px;
+      margin-top: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .loader-progress {
+      width: 0%;
+      height: 100%;
+      background: var(--deep-rose);
+      transition: width 0.3s ease;
+    }
+
+    /* ==========================================
+       FLOATING AUDIO CONTROLLER WIDGET
+       ========================================== */
+    .audio-control {
+      position: fixed;
+      top: 25px;
+      right: 25px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 10px 18px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s ease;
+    }
+
+    .audio-control:hover {
+      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .music-waves {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 16px;
+    }
+
+    .music-bar {
+      width: 3px;
+      height: 100%;
+      background: var(--deep-rose);
+      border-radius: 3px;
+      animation: bounce 1s infinite ease-in-out alternate;
+    }
+
+    .music-bar:nth-child(2) { animation-delay: 0.2s; }
+    .music-bar:nth-child(3) { animation-delay: 0.4s; }
+
+    .music-paused .music-bar {
+      animation-play-state: paused;
+      height: 4px;
+    }
+
+    /* ==========================================
+       2. HERO SECTION
+       ========================================== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 20px 40px;
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .tagline {
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 4px;
+      color: var(--deep-rose);
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .hero-title {
+      font-size: 3.8rem;
+      line-height: 1.15;
+      margin-bottom: 25px;
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #d81b60, #ff6b8b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      margin-bottom: 35px;
+      line-height: 1.6;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ==========================================
+       3. INTERACTIVE LOVE LETTER SECTION
+       ========================================== */
+    .envelope-wrapper {
+      max-width: 650px;
+      margin: 0 auto 80px;
+      perspective: 1000px;
+      cursor: pointer;
+    }
+
+    .envelope {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: var(--glass-shadow);
+      position: relative;
+      transition: all 0.5s ease;
+    }
+
+    .envelope:hover {
+      transform: translateY(-5px);
+    }
+
+    .envelope-icon {
+      font-size: 3.5rem;
+      margin-bottom: 15px;
+    }
+
+    .letter-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(8px);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .letter-content {
+      background: #fffdfa;
+      max-width: 650px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border-radius: 20px;
+      padding: 45px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+      position: relative;
+      animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .letter-content h2 {
+      font-size: 2.5rem;
+      color: var(--deep-rose);
+      margin-bottom: 20px;
+    }
+
+    .letter-body {
+      font-size: 1.4rem;
+      line-height: 1.8;
+      color: #4a3842;
+      text-align: left;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #aaa;
+      transition: color 0.2s;
+    }
+
+    .close-modal:hover {
+      color: var(--deep-rose);
+    }
+
+    /* ==========================================
+       4. OUR STORY TIMELINE
+       ========================================== */
+    .section-title {
+      text-align: center;
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: var(--text-main);
+    }
+
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 50px;
+    }
+
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 0 auto 80px;
+    }
+
+    .timeline::after {
+      content: '';
+      position: absolute;
+      width: 4px;
+      background: rgba(216, 27, 96, 0.2);
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      margin-left: -2px;
+      border-radius: 2px;
+    }
+
+    .timeline-item {
+      padding: 10px 40px;
+      position: relative;
+      width: 50%;
+      box-sizing: border-box;
+    }
+
+    .timeline-item::after {
+      content: '❤️';
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      right: -15px;
+      background: var(--white);
+      border: 2px solid var(--primary);
+      top: 15px;
+      border-radius: 50%;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+
+    .left { left: 0; }
+    .right { left: 50%; }
+
+    .right::after { left: -15px; }
+
+    .timeline-content {
+      padding: 25px;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 18px;
+    }
+
+    .timeline-date {
+      font-weight: 600;
+      color: var(--deep-rose);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .timeline-title {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    /* ==========================================
+       5. REASONS WHY I LOVE YOU (GRID / REVEAL)
+       ========================================== */
+    .reasons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-bottom: 80px;
+    }
+
+    .reason-card {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reason-card:hover {
+      transform: translateY(-8px);
+      background: rgba(255, 255, 255, 0.35);
+    }
+
+    .reason-number {
+      font-size: 2.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--primary);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .reason-text {
+      font-size: 1rem;
+      line-height: 1.5;
+      color: var(--text-main);
+    }
+
+    /* ==========================================
+       6. LIVE TIME & LOVE EXPLOSION COUNTER
+       ========================================== */
+    .counter-card {
+      text-align: center;
+      padding: 50px 30px;
+      margin-bottom: 80px;
+    }
+
+    .timer-display {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0;
+      flex-wrap: wrap;
+    }
+
+    .timer-unit {
+      background: rgba(255, 255, 255, 0.4);
+      padding: 15px 25px;
+      border-radius: 16px;
+      min-width: 90px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    }
+
+    .timer-val {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--deep-rose);
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .timer-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+    }
+
+    /* Floating Hearts Burst Button */
+    .love-btn-wrapper {
+      margin-top: 30px;
+    }
+
+    .pulse-btn {
+      animation: heartPulse 2s infinite;
+    }
+
+    /* ==========================================
+       7. FOOTER
+       ========================================== */
+    footer {
+      text-align: center;
+      padding: 40px 20px 60px;
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    footer .heart-icon {
+      color: var(--deep-rose);
+      display: inline-block;
+      animation: pulse 1s infinite alternate;
+    }
+
+    /* ==========================================
+       KEYFRAME ANIMATIONS
+       ========================================== */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.18); }
+    }
+
+    @keyframes heartPulse {
+      0% { box-shadow: 0 0 0 0 rgba(216, 27, 96, 0.5); }
+      70% { box-shadow: 0 0 0 20px rgba(216, 27, 96, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(216, 27, 96, 0); }
+    }
+
+    @keyframes bounce {
+      0% { height: 4px; }
+      100% { height: 16px; }
+    }
+
+    @keyframes modalPop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* ==========================================
+       RESPONSIVE DESIGN (MOBILE)
+       ========================================== */
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2.6rem; }
+      .hero-subtitle { font-size: 1.1rem; }
+      .glass-card { padding: 25px; }
+      
+      .timeline::after { left: 31px; }
+      .timeline-item { width: 100%; padding-left: 70px; padding-right: 10px; }
+      .timeline-item.right { left: 0; }
+      .timeline-item::after { left: 16px; }
+      
+      .timer-unit { min-width: 70px; padding: 10px 15px; }
+      .timer-val { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Particle Canvas -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- 1. Romantic Loading Screen -->
+  <div id="loader">
+    <div class="heart-loader">💖</div>
+    <div class="loader-text handwriting">Building our dream love story...</div>
+    <div class="loader-bar">
+      <div class="loader-progress" id="loader-progress"></div>
+    </div>
+  </div>
+
+  <!-- Audio Controller Widget -->
+  <div class="audio-control music-paused" id="audio-toggle" title="Toggle Romantic Ambient Music">
+    <div class="music-waves">
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+      <div class="music-bar"></div>
+    </div>
+    <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);" id="audio-status-text">Play Music 🎵</span>
+  </div>
+
+  <!-- Hidden HTML5 Audio Element (Optional custom MP3 link) -->
+  <audio id="bg-music" loop preload="auto">
+    <!-- Replace source below with your custom MP3 file link if desired -->
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=romantic-piano-112199.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Main Website Content -->
+  <main class="container">
+
+    <!-- 2. HERO SECTION -->
+    <section class="hero">
+      <div class="hero-content">
+        <div class="tagline">✦ 1st August • Happy National Girlfriend's Day ✦</div>
+        <h1 class="hero-title">
+          To My Beautiful <span>[BABYGIRL]</span>,<br />
+          You Are My Entire Universe.
+        </h1>
+        <p class="hero-subtitle">
+          In a world full of temporary things, you are my perpetual happiness. 
+          Today is dedicated to celebrating the warmth, magic, and unconditional love you bring to my life every single day.
+        </p>
+        <div class="hero-buttons">
+          <button class="btn pulse-btn" id="open-letter-btn">Open My Heart ✉️</button>
+          <a href="#story-section" class="btn btn-secondary">Explore Our Journey ✦</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. INTERACTIVE LOVE LETTER MODAL -->
+    <div class="envelope-wrapper" id="envelope-trigger">
+      <div class="glass-card envelope">
+        <div class="envelope-icon">💌</div>
+        <h3 class="serif" style="font-size: 1.8rem; margin-bottom: 8px;">A Secret Letter For You</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Click to break the golden seal & read my heart</p>
+      </div>
+    </div>
+
+    <div class="letter-modal" id="letter-modal">
+      <div class="letter-content">
+        <span class="close-modal" id="close-letter">&times;</span>
+        <h2 class="serif">My Loml [Gunju] ,</h2>
+        <div class="letter-body handwriting">
+          <p style="margin-bottom: 15px;">
+            From the moment you entered my life, everything became brighter, softer, and infinitely more beautiful. Your laugh is my favorite melody, and your smile is the sweetest sight in the world.I would like to see it 24/7, my baby youre the best thing that has happend to me
+          </p>
+          <p style="margin-bottom: 15px;">
+            Thank you for being my safest haven, my best friend, my soulmate, and my biggest supporter. Every moment spent with you feels like a page from a fairytale I never want to end.
+          </p>
+          <p style="margin-bottom: 15px;">
+            Happy Girlfriend's Day, my love. Today and every day, I promise to cherish, respect, and love you with all my heart.
+          </p>
+          <p style="text-align: right; font-weight: bold; margin-top: 30px; color: var(--deep-rose);">
+            Forever & Always Yours,<br />
+            [Your Neelu] ❤️
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. OUR STORY TIMELINE -->
+    <section id="story-section" style="padding-top: 40px;">
+      <h2 class="section-title">Our Romantic Journey</h2>
+      <p class="section-subtitle">A few unforgettable chapters from our love story</p>
+
+      <div class="timeline">
+        
+        <div class="timeline-item left">
+          <div class="timeline-content">
+            <div class="timeline-date">The Beginning • [06 October]</div>
+            <h3 class="timeline-title serif">When Worlds Collided</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+              Not 6oct but 25 Sept is the magical day we first talked. I knew right away that there was something extraordinarily special about you. My heart knew it could never set free you own it
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item right">
+          <div class="timeline-content">
+            <div class="timeline-date">First Date • [3 March]</div>
+            <h3 class="timeline-title serif"> Endless Laughter & Memories</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+              Time flew by like seconds. Looking into your eyes, I realized I never wanted that conversation to end.That concert that date that day is the best day of my life the day i knew youre the one for me. That lunch date in BLAH after best concert 
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item left">
+          <div class="timeline-content">
+            <div class="timeline-date">A Special Milestone • [Date / Month]</div>
+            <h3 class="timeline-title serif">The Moment I Knew</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+              The exact moment I fell head over heels in love with you and knew you were the one I wanted to walk through life with.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-item right">
+          <div class="timeline-content">
+            <div class="timeline-date">Today & Forever • 1st August</div>
+            <h3 class="timeline-title serif">National Girlfriend's Day</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">
+              Celebrating you today—and looking forward to creating millions of core memories together in our future.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 5. REASONS WHY I LOVE YOU -->
+    <section>
+      <h2 class="section-title">Why You Are So Special</h2>
+      <p class="section-subtitle">Just a few of the million reasons why I fall deeper for you every day</p>
+
+      <div class="reasons-grid">
+        <div class="reason-card">
+          <div class="reason-number">01</div>
+          <p class="reason-text">Your radiant laugh that instantly brightens up even my darkest and hardest days.</p>
+        </div>
+        <div class="reason-card">
+          <div class="reason-number">02</div>
+          <p class="reason-text">The gentle, loving way you hold my hand and make me feel like I belong.</p>
+        </div>
+        <div class="reason-card">
+          <div class="reason-number">03</div>
+          <p class="reason-text">Your incredible kindness, compassion, and the big, warm heart you share with everyone.</p>
+        </div>
+        <div class="reason-card">
+          <div class="reason-number">04</div>
+          <p class="reason-text">How you make even simple, mundane moments feel like an extraordinary adventure.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. LIVE LOVE COUNTER & INTERACTIVE BURST -->
+    <section>
+      <div class="glass-card counter-card">
+        <h2 class="serif" style="font-size: 2.5rem; margin-bottom: 10px;">Counting Every Magical Second</h2>
+        <p style="color: var(--text-muted);">How long my heart has officially belonged to you</p>
+
+        <div class="timer-display" id="timer">
+          <div class="timer-unit"><div class="timer-val" id="days">00</div><div class="timer-label">Days</div></div>
+          <div class="timer-unit"><div class="timer-val" id="hours">00</div><div class="timer-label">Hours</div></div>
+          <div class="timer-unit"><div class="timer-val" id="minutes">00</div><div class="timer-label">Minutes</div></div>
+          <div class="timer-unit"><div class="timer-val" id="seconds">00</div><div class="timer-label">Seconds</div></div>
+        </div>
+
+        <div class="love-btn-wrapper">
+          <button class="btn pulse-btn" id="explosion-btn">Send Love Explosion 💥💖</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 7. FOOTER -->
+  <footer>
+    <div class="container">
+      <p style="font-size: 1.1rem; margin-bottom: 10px;">
+        Made with endless <span class="heart-icon">❤️</span> for <strong>Gunjie My Loml❤️</strong>
+      </p>
+      <p style="font-size: 0.85rem; opacity: 0.8;">
+        Happy National Girlfriend's Day • August 1st, 2026
+      </p>
+    </div>
+  </footer>
+
+  <!-- ==========================================
+       JAVASCRIPT LOGIC
+       ========================================== -->
+  <script>
+    /* --------------------------------------------------
+       1. LOADING SCREEN ANIMATION
+       -------------------------------------------------- */
+    window.addEventListener('load', () => {
+      const progress = document.getElementById('loader-progress');
+      const loader = document.getElementById('loader');
+      
+      progress.style.width = '100%';
+      
+      setTimeout(() => {
+        loader.style.opacity = '0';
+        loader.style.visibility = 'hidden';
+      }, 1000);
+    });
+
+    /* --------------------------------------------------
+       2. CANVAS PARTICLES & SPARKLING HEARTS ENGINE
+       -------------------------------------------------- */
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
+    class Particle {
+      constructor(x, y, isBurst = false) {
+        this.x = x || Math.random() * width;
+        this.y = y || (isBurst ? height / 2 : height + 20);
+        this.size = Math.random() * (isBurst ? 18 : 12) + 6;
+        this.speedX = isBurst ? (Math.random() - 0.5) * 12 : (Math.random() - 0.5) * 1.5;
+        this.speedY = isBurst ? (Math.random() - 0.5) * 12 : -Math.random() * 2 - 0.8;
+        this.opacity = 1;
+        this.fade = isBurst ? Math.random() * 0.02 + 0.01 : Math.random() * 0.005 + 0.002;
+        this.color = `hsl(${Math.random() * 30 + 340}, 100%, ${Math.random() * 20 + 70}%)`;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.opacity -= this.fade;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, this.opacity);
+        ctx.font = `${this.size}px serif`;
+        ctx.fillText('❤️', this.x, this.y);
+        ctx.restore();
+      }
+    }
+
+    let particles = [];
+
+    // Continuous soft floating particles
+    setInterval(() => {
+      if (particles.length < 50) {
+        particles.push(new Particle());
+      }
+    }, 300);
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].update();
+        particles[i].draw();
+
+        if (particles[i].opacity <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // Love explosion trigger
+    document.getElementById('explosion-btn').addEventListener('click', (e) => {
+      const rect = e.target.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      for (let i = 0; i < 60; i++) {
+        particles.push(new Particle(centerX, centerY, true));
+      }
+    });
+
+    /* --------------------------------------------------
+       3. LOVE COUNTER / TIME TOGETHER (CUSTOMIZABLE)
+       -------------------------------------------------- */
+    // Set your anniversary/relationship start date here (YYYY-MM-DD format)
+    const startDate = new Date('2024-10-06T00:00:00');
+
+    function updateTimer() {
+      const now = new Date();
+      const diff = now - startDate;
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / 1000 / 60) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      document.getElementById('days').innerText = days < 10 ? '0' + days : days;
+      document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+      document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+      document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+    /* --------------------------------------------------
+       4. LOVE LETTER MODAL CONTROLLER
+       -------------------------------------------------- */
+    const modal = document.getElementById('letter-modal');
+    const openBtn = document.getElementById('open-letter-btn');
+    const envelopeTrigger = document.getElementById('envelope-trigger');
+    const closeBtn = document.getElementById('close-letter');
+
+    function openModal() {
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+
+    openBtn.addEventListener('click', openModal);
+    envelopeTrigger.addEventListener('click', openModal);
+    closeBtn.addEventListener('click', closeModal);
+
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    /* --------------------------------------------------
+       5. AUDIO PLAYER & WEB AUDIO SYNTH BACKUP
+       -------------------------------------------------- */
+    const audioToggle = document.getElementById('audio-toggle');
+    const audioStatus = document.getElementById('audio-status-text');
+    const bgMusic = document.getElementById('bg-music');
+    let isPlaying = false;
+
+    // Optional ambient tone generator using Web Audio API if no MP3 file loads
+    let audioCtx, oscillator;
+
+    function playSynthTone() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(220, audioCtx.currentTime); // Soft warm tone
+        gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+      } else {
+        audioCtx.resume();
+      }
+    }
+
+    audioToggle.addEventListener('click', () => {
+      if (!isPlaying) {
+        bgMusic.play().then(() => {
+          audioStatus.innerText = "Playing 💕";
+        }).catch(() => {
+          // Fallback to Web Audio synth if MP3 URL fails/is blocked
+          playSynthTone();
+          audioStatus.innerText = "Playing Ambient 🎵";
+        });
+        audioToggle.classList.remove('music-paused');
+        isPlaying = true;
+      } else {
+        bgMusic.pause();
+        if (audioCtx) audioCtx.suspend();
+        audioStatus.innerText = "Play Music 🎵";
+        audioToggle.classList.add('music-paused');
+        isPlaying = false;
+      }
+    });
+  </script>
+
+</body>
+</html>
